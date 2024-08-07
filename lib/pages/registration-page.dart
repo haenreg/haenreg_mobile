@@ -8,7 +8,7 @@ class RegistrationPage extends StatelessWidget {
         title: Text('Registering!!'),
       ),
       body: Center(
-        child: Text('Her kan man registere!!'),
+        child: Text('Her kan man registere hændelser!!'),
       ),
     );
   }

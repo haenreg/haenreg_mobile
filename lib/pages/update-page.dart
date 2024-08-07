@@ -5,10 +5,10 @@ class UpdatePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Opdatering!!!'),
+        title: Text('Dine registrerede hændelser'),
       ),
       body: Center(
-        child: Text('Denne side kan man opdatere!!'),
+        child: Text('Denne side kan man se og ændre registrerede hændelser!!'),
       ),
     );
   }
