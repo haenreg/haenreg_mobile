@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:haenreg_mobile/pages/registration-page.dart';
+import 'package:haenreg_mobile/pages/update-page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -68,6 +70,20 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  void _navigateToRegistrationPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => RegistrationPage()),
+    );
+  }
+
+  void _navigateToUpdatePage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => UpdatePage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -81,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // TRY THIS: Try changing the color here to a specific color (to
         // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
         // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: Colors.amber,
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
@@ -111,6 +127,15 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => _navigateToRegistrationPage(context),
+              child: Text('registering'),
+            ),
+            ElevatedButton(
+              onPressed: () => _navigateToUpdatePage(context),
+              child: Text('opdatering'),
             ),
           ],
         ),
