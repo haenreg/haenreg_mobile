@@ -10,7 +10,13 @@ class Overview extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: const CustomTopBar(), // Use the custom top bar
+      appBar: CustomTopBar(
+          /* isEditMode: true, // Set this to true or false based on your requirement
+        onEdit: () {
+          print("Edit button clicked");
+        }, */
+          ),
+// Use the custom top bar
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
