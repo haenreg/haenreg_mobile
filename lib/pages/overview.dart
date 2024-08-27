@@ -54,20 +54,29 @@ class _OverviewState extends State<Overview> {
               if (answer['question']['type'] == 'DATE') {
                 date = answer['answer'];
                 dateFound = true;
-              } else if (dateFound &&
-                  (answer['question']['type'] == 'TEXT' ||
-                      answer['question']['type'] == 'SELECT_ONE')) {
-                title = answer['answer'] ??
-                    answer['answerChoices']?.first['questionChoice']['choice'];
-                break;
+              } else if (dateFound && title == null) {
+                // Check if the answer is not empty
+                if (answer['answer'] != null && answer['answer'].isNotEmpty) {
+                  title = answer['answer'];
+                } else if (answer['answerChoices'] != null &&
+                    answer['answerChoices'].isNotEmpty) {
+                  // Check the answerChoices
+                  var firstChoice =
+                      answer['answerChoices'].first['questionChoice'];
+                  if (firstChoice['dependent'] != null) {
+                    title = firstChoice['dependent']['choice'];
+                  } else {
+                    title = firstChoice['choice'];
+                  }
+                }
               }
             }
 
             return CaseItem(
-                title:
-                    title ?? 'Unknown',
-                date: date ?? 'Unknown',
-                status: data['approved']);
+              title: title ?? 'Unknown',
+              date: date ?? 'Unknown',
+              status: data['approved'],
+            );
           }).toList();
         });
       } else {
