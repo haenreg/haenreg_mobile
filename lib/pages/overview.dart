@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haenreg_mobile/components/case-item.dart';
 import 'package:haenreg_mobile/components/custom-top-bar.dart';
+import 'registration-page.dart';
 
 class Overview extends StatelessWidget {
   const Overview({super.key});
@@ -70,6 +71,16 @@ class Overview extends StatelessWidget {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => RegistrationPage()),
+          );
+        },
+        tooltip: 'Tilføj hændelse',
+        child: const Icon(Icons.add),
       ),
     );
   }
