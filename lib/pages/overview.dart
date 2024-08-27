@@ -1,22 +1,94 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:haenreg_mobile/config/api-config.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:haenreg_mobile/components/case-item.dart';
 import 'package:haenreg_mobile/components/custom-top-bar.dart';
 
-class Overview extends StatelessWidget {
+class Overview extends StatefulWidget {
   const Overview({super.key});
+
+  @override
+  _OverviewState createState() => _OverviewState();
+}
+
+class _OverviewState extends State<Overview> {
+  List<CaseItem> caseItems = [];
+
+  Future<String?> getTokenFromStorage() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('authToken');
+  }
+
+  Future<void> _fetchData() async {
+    final token = await getTokenFromStorage();
+
+    if (token == null) {
+      print('No token found');
+      return;
+    }
+
+    try {
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/cases/get-cases-by-user'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List<dynamic> responseData = jsonDecode(response.body);
+
+        // Generate a list of CaseItems
+        setState(() {
+          caseItems = responseData.map<CaseItem>((data) {
+            String? date;
+            String? title;
+
+            bool dateFound = false;
+
+            for (var answer in data['answers']) {
+              if (answer['question']['type'] == 'DATE') {
+                date = answer['answer'];
+                dateFound = true;
+              } else if (dateFound &&
+                  (answer['question']['type'] == 'TEXT' ||
+                      answer['question']['type'] == 'SELECT_ONE')) {
+                title = answer['answer'] ??
+                    answer['answerChoices']?.first['questionChoice']['choice'];
+                break;
+              }
+            }
+
+            return CaseItem(
+                title:
+                    title ?? 'Unknown',
+                date: date ?? 'Unknown',
+                status: data['approved']);
+          }).toList();
+        });
+      } else {
+        print('Failed to fetch data: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('An error occurred: $error');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData(); // Fetch data when the widget is initialized
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      appBar: CustomTopBar(
-          /* isEditMode: true, // Set this to true or false based on your requirement
-        onEdit: () {
-          print("Edit button clicked");
-        }, */
-          ),
-// Use the custom top bar
+      appBar: CustomTopBar(),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -55,18 +127,17 @@ class Overview extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16.0),
-              // List of CaseItems
-              const CaseItem(
-                title: 'Indskoling',
-                date: '30-07-2024 - 13:45',
-                isComplete: true,
+              // Dynamically generate CaseItems
+              Expanded(
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: caseItems.isNotEmpty
+                      ? caseItems
+                      : [
+                          const Center(child: Text('No cases available')),
+                        ],
+                ),
               ),
-              const CaseItem(
-                title: 'Udskoling',
-                date: '30-07-2024 - 13:45',
-                isComplete: false,
-              ),
-              // Add more CaseItems as needed
             ],
           ),
         ),

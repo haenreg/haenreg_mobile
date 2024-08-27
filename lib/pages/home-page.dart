@@ -3,8 +3,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:haenreg_mobile/config/api-config.dart';
 import 'package:haenreg_mobile/pages/overview.dart';
-import 'package:haenreg_mobile/pages/update-page.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,7 +14,7 @@ class HomePage extends StatelessWidget {
 
   Future<void> _login(
       BuildContext context, String username, String password) async {
-    final url = Uri.parse('http://10.0.2.2:3000/api/users/login');
+    final url = Uri.parse('${ApiConfig.baseUrl}/users/login');
 
     // Example login credentials
     final body = jsonEncode({

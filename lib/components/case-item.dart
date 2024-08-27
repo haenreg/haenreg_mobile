@@ -3,13 +3,13 @@ import 'package:flutter/material.dart';
 class CaseItem extends StatelessWidget {
   final String title;
   final String date;
-  final bool isComplete;
+  final String status;
 
   const CaseItem({
     Key? key,
     required this.title,
     required this.date,
-    required this.isComplete,
+    required this.status,
   }) : super(key: key);
 
   @override
@@ -54,8 +54,16 @@ class CaseItem extends StatelessWidget {
             ],
           ),
           Icon(
-            isComplete ? Icons.check_circle : Icons.cancel,
-            color: isComplete ? Colors.green : Colors.red,
+            status == 'APPROVED'
+                ? Icons.check_circle
+                : status == 'WAITING'
+                    ? Icons.hourglass_empty
+                    : Icons.cancel,
+            color: status == 'APPROVED'
+                ? Colors.green
+                : status == 'WAITING'
+                    ? Colors.yellow
+                    : Colors.red,
             size: 32.0,
           ),
         ],
