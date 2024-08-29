@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:haenreg_mobile/services/http-service.dart';
 import 'package:haenreg_mobile/components/custom-top-bar.dart';
 import 'package:haenreg_mobile/components/select-one.dart';
-// import 'package:haenreg_mobile/components/scale.dart'; // Uncomment when you have a Scale component
 
 class UpdatePage extends StatefulWidget {
   final String id;
@@ -31,8 +30,36 @@ class _UpdatePageState extends State<UpdatePage> {
       final response = await _httpService.get('/questions/get-questions');
       final List<dynamic> questions = jsonDecode(response.body);
 
+      final caseResponse =
+          await _httpService.get('/cases/get-case/${widget.id}');
+      final Map<String, dynamic> caseData = jsonDecode(caseResponse.body);
+
+      final List<dynamic> answers = caseData['answers'];
+
       setState(() {
         questionWidgets = questions.map<Widget>((question) {
+          // Find the corresponding answer for this question
+          final answer = answers.firstWhere(
+            (a) => a['question']['id'] == question['id'],
+            orElse: () => null,
+          );
+
+          // Initialize variables for the initial selected value
+          int? initialSelectedChoiceId;
+          String? initialAnswerString;
+
+          if (answer != null) {
+            if (answer['answerChoices'] != null &&
+                answer['answerChoices'].isNotEmpty) {
+              // Use the ID from answerChoices if available
+              initialSelectedChoiceId =
+                  answer['answerChoices'][0]['questionChoice']['id'];
+            } else if (answer['answer'] != null && answer['answer'] is String) {
+              // Use the string answer if answerChoices is not available
+              initialAnswerString = answer['answer'];
+            }
+          }
+
           switch (question['type']) {
             case 'SELECT_ONE':
               return SelectOne(
@@ -42,6 +69,7 @@ class _UpdatePageState extends State<UpdatePage> {
                 choices: List<Map<String, dynamic>>.from(
                   question['questionChoices'],
                 ),
+                initialSelectedChoiceId: initialSelectedChoiceId,
                 onSelected: (selectedData) {
                   print("Selected Data: $selectedData");
                   // Handle the submitted data here
@@ -52,7 +80,11 @@ class _UpdatePageState extends State<UpdatePage> {
             //   return Scale(
             //     title: question['title'],
             //     description: question['description'],
-            //     // Pass any other necessary parameters
+            //     initialValue: initialAnswerString != null ? int.tryParse(initialAnswerString) : null,
+            //     onSelected: (selectedData) {
+            //       print("Selected Data: $selectedData");
+            //       // Handle the submitted data here
+            //     },
             //   );
             // Add more cases here for different question types as you create more components
             default:

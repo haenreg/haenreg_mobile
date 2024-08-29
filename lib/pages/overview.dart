@@ -21,6 +21,14 @@ class _OverviewState extends State<Overview> {
 
   List<CaseItem> caseItems = [];
 
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData(); // Fetch data when the widget is initialized
+  }
+
   Future<void> _fetchData() async {
     try {
       final response = await _httpService.get('/cases/get-cases-by-user');
@@ -64,19 +72,16 @@ class _OverviewState extends State<Overview> {
           }).toList();
         });
       } else {
+        isLoading = false;
         print('Failed to fetch data: ${response.statusCode}');
       }
     } catch (error) {
+      isLoading = false;
       print('An error occurred: $error');
     } finally {
+      isLoading = false;
       print(caseItems.length);
     }
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _fetchData(); // Fetch data when the widget is initialized
   }
 
   @override
@@ -124,30 +129,36 @@ class _OverviewState extends State<Overview> {
               const SizedBox(height: 16.0),
               // Dynamically generate CaseItems
               Expanded(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: caseItems.isNotEmpty
-                      ? caseItems.map((caseItem) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => UpdatePage(
-                                    id: caseItem.id
-                                        .toString(), // Ensure id is passed as a string
-                                  ),
-                                ),
-                              );
-                            },
-                            child: caseItem, // Use the CaseItem widget directly
-                          );
-                        }).toList()
-                      : [
-                          const Center(child: Text('No cases available')),
-                        ],
-                ),
-              ),
+                child: isLoading
+                    ? Center(
+                        child:
+                            CircularProgressIndicator(), // Show a loading indicator while data is being fetched
+                      )
+                    : ListView(
+                        padding: EdgeInsets.zero,
+                        children: caseItems.isNotEmpty
+                            ? caseItems.map((caseItem) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => UpdatePage(
+                                          id: caseItem.id
+                                              .toString(), // Ensure id is passed as a string
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child:
+                                      caseItem, // Use the CaseItem widget directly
+                                );
+                              }).toList()
+                            : [
+                                const Center(child: Text('No cases available')),
+                              ],
+                      ),
+              )
             ],
           ),
         ),

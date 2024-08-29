@@ -6,6 +6,7 @@ class SelectOne extends StatefulWidget {
   final String description;
   final List<Map<String, dynamic>> choices;
   final Function(Map<String, dynamic>) onSelected; // Callback to parent
+  final int? initialSelectedChoiceId; // New property for initial selection
 
   const SelectOne({
     super.key,
@@ -14,6 +15,7 @@ class SelectOne extends StatefulWidget {
     required this.description,
     required this.choices,
     required this.onSelected,
+    this.initialSelectedChoiceId, // Optional, if no initial selection is needed
   });
 
   @override
@@ -22,6 +24,13 @@ class SelectOne extends StatefulWidget {
 
 class _SelectOneState extends State<SelectOne> {
   int? _selectedChoiceId; // State variable to track the selected choice
+
+  @override
+  void initState() {
+    super.initState();
+    // Set the initial selected choice if provided by the parent
+    _selectedChoiceId = widget.initialSelectedChoiceId;
+  }
 
   void _onRadioSelected(int choiceId) {
     setState(() {
@@ -33,6 +42,17 @@ class _SelectOneState extends State<SelectOne> {
       "question": widget.questionId,
       "answer": {"choice": choiceId}
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant SelectOne oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialSelectedChoiceId != oldWidget.initialSelectedChoiceId) {
+      setState(() {
+        _selectedChoiceId =
+            widget.initialSelectedChoiceId; // Update when the prop changes
+      });
+    }
   }
 
   @override
