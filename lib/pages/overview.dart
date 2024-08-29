@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haenreg_mobile/config/api-config.dart';
+import 'package:haenreg_mobile/pages/update-page.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:haenreg_mobile/components/case-item.dart';
@@ -42,7 +43,6 @@ class _OverviewState extends State<Overview> {
       if (response.statusCode == 200) {
         final List<dynamic> responseData = jsonDecode(response.body);
 
-        // Generate a list of CaseItems
         setState(() {
           caseItems = responseData.map<CaseItem>((data) {
             String? date;
@@ -55,12 +55,10 @@ class _OverviewState extends State<Overview> {
                 date = answer['answer'];
                 dateFound = true;
               } else if (dateFound && title == null) {
-                // Check if the answer is not empty
                 if (answer['answer'] != null && answer['answer'].isNotEmpty) {
                   title = answer['answer'];
                 } else if (answer['answerChoices'] != null &&
                     answer['answerChoices'].isNotEmpty) {
-                  // Check the answerChoices
                   var firstChoice =
                       answer['answerChoices'].first['questionChoice'];
                   if (firstChoice['dependent'] != null) {
@@ -73,6 +71,7 @@ class _OverviewState extends State<Overview> {
             }
 
             return CaseItem(
+              id: data['id'].toString(),
               title: title ?? 'Unknown',
               date: date ?? 'Unknown',
               status: data['approved'],
@@ -84,6 +83,8 @@ class _OverviewState extends State<Overview> {
       }
     } catch (error) {
       print('An error occurred: $error');
+    } finally {
+      print(caseItems.length);
     }
   }
 
@@ -141,7 +142,22 @@ class _OverviewState extends State<Overview> {
                 child: ListView(
                   padding: EdgeInsets.zero,
                   children: caseItems.isNotEmpty
-                      ? caseItems
+                      ? caseItems.map((caseItem) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => UpdatePage(
+                                    id: caseItem.id
+                                        .toString(), // Ensure id is passed as a string
+                                  ),
+                                ),
+                              );
+                            },
+                            child: caseItem, // Use the CaseItem widget directly
+                          );
+                        }).toList()
                       : [
                           const Center(child: Text('No cases available')),
                         ],

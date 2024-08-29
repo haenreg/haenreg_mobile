@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:haenreg_mobile/components/custom-top-bar.dart';
 
 class UpdatePage extends StatelessWidget {
+  final String id;
+
+  UpdatePage({required this.id});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Opdatering!!!'),
+      appBar: CustomTopBar(
+        isEditMode: true,
+        onEdit: () {
+          print("Edit button clicked");
+        },
       ),
       body: Center(
-        child: Text('Denne side kan man opdatere!!'),
+        child: Text('Case ID: $id'),
       ),
     );
   }
