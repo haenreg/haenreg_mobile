@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CaseItem extends StatelessWidget {
-  final String id;
+  final int id;
   final String title;
   final String date;
   final String status;

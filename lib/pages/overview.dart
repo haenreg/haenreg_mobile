@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:haenreg_mobile/config/api-config.dart';
 import 'package:haenreg_mobile/pages/update-page.dart';
+import 'package:haenreg_mobile/services/http-service.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:haenreg_mobile/components/case-item.dart';
@@ -16,29 +17,13 @@ class Overview extends StatefulWidget {
 }
 
 class _OverviewState extends State<Overview> {
+  final HttpService _httpService = HttpService();
+
   List<CaseItem> caseItems = [];
 
-  Future<String?> getTokenFromStorage() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString('authToken');
-  }
-
   Future<void> _fetchData() async {
-    final token = await getTokenFromStorage();
-
-    if (token == null) {
-      print('No token found');
-      return;
-    }
-
     try {
-      final response = await http.get(
-        Uri.parse('${ApiConfig.baseUrl}/cases/get-cases-by-user'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
+      final response = await _httpService.get('/cases/get-cases-by-user');
 
       if (response.statusCode == 200) {
         final List<dynamic> responseData = jsonDecode(response.body);
@@ -71,7 +56,7 @@ class _OverviewState extends State<Overview> {
             }
 
             return CaseItem(
-              id: data['id'].toString(),
+              id: data['id'],
               title: title ?? 'Unknown',
               date: date ?? 'Unknown',
               status: data['approved'],
