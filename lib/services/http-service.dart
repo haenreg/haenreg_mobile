@@ -54,6 +54,25 @@ class HttpService {
     return _handleResponse(response);
   }
 
+  Future<http.Response> postArray(String endpoint, List<Map<String, dynamic>> data) async {
+    final token = await _getToken();
+
+    if (token == null) {
+      throw Exception('No token found');
+    }
+
+    final response = await http.post(
+      _buildUri(endpoint),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode(data),
+    );
+
+    return _handleResponse(response);
+  }
+
   // DELETE request
   Future<http.Response> delete(String endpoint) async {
     final token = await _getToken();

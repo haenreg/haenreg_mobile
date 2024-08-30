@@ -23,6 +23,7 @@ class _UpdatePageState extends State<UpdatePage> {
   final TextEditingController _textController = TextEditingController();
 
   List<Widget> questionWidgets = [];
+  List<Map<String, dynamic>> updateAnswers = [];
   bool isLoading = true;
 
   @override
@@ -75,9 +76,7 @@ class _UpdatePageState extends State<UpdatePage> {
                 ),
                 initialSelectedChoiceId: initialSelectedChoicesIds?.first,
                 onSelected: (selectedData) {
-                  print("Selected Data: $selectedData");
-                  // Handle the submitted data here
-                  // For example, you could send it to an API or update your state
+                  setBodyForQuestion(selectedData);
                 },
               );
             case 'MULTI_SELECT':
@@ -90,7 +89,7 @@ class _UpdatePageState extends State<UpdatePage> {
                 ),
                 initialSelectedChoicesIds: initialSelectedChoicesIds,
                 onSelected: (selectedData) {
-                  print("Selected Data: $selectedData");
+                  setBodyForQuestion(selectedData);
                 },
               );
             case 'TEXT':
@@ -109,8 +108,7 @@ class _UpdatePageState extends State<UpdatePage> {
                 ),
                 borderRadius: BorderRadius.circular(12.0),
                 onTextChanged: (text) {
-                  print(
-                      'Text changed: $text og så har vi den her $initialAnswerString');
+                  setBodyForQuestion(text);
                 },
               );
             case 'SCALE':
@@ -121,7 +119,7 @@ class _UpdatePageState extends State<UpdatePage> {
                 title: question['title'],
                 description: question['description'],
                 onRatingChanged: (rating) {
-                  print('Text changed: $rating');
+                  setBodyForQuestion(rating);
                 },
               );
             case 'YES_NO':
@@ -131,7 +129,7 @@ class _UpdatePageState extends State<UpdatePage> {
                 title: question['title'],
                 description: question['description'],
                 onOptionChanged: (newValue) {
-                  print('YES_NO changed: $newValue');
+                  setBodyForQuestion(newValue);
                 },
               );
             default:
@@ -156,13 +154,29 @@ class _UpdatePageState extends State<UpdatePage> {
     }
   }
 
+  Future<void> handleSubmit() async {
+    final response = await _httpService.postArray(
+        '/cases/update-case/${widget.id}', updateAnswers);
+  }
+
+  void setBodyForQuestion(Map<String, dynamic> answer) {
+    int existingIndex = updateAnswers
+        .indexWhere((element) => element['question'] == answer['question']);
+
+    if (existingIndex != -1) {
+      updateAnswers[existingIndex] = answer;
+    } else {
+      updateAnswers.add(answer);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomTopBar(
         isEditMode: true,
         onEdit: () {
-          print('Edit button clicked ${widget.id}');
+          handleSubmit();
         },
       ),
       body: Center(

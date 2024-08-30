@@ -73,7 +73,7 @@ class _RatingSliderState extends State<RatingSlider> {
             widget.onRatingChanged({
               "question": widget.questionId,
               "answer": {
-                "answer": _currentRating.round(),
+                "answer": _currentRating.round().toString(),
               },
             }); // Emit structured data
           },
