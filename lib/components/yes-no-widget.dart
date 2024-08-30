@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class YesNoWidget extends StatefulWidget {
-  final String selectedOption;
+  final String? selectedOption; // Made optional by changing to String?
   final int questionId; // ID for the question related to the yes/no answer
   final String title; // Title of the question
   final String description; // Description of the question
@@ -10,7 +10,7 @@ class YesNoWidget extends StatefulWidget {
       onOptionChanged; // Updated callback type
 
   YesNoWidget({
-    required this.selectedOption,
+    this.selectedOption, // No longer required
     required this.questionId,
     required this.title,
     required this.description,
@@ -22,7 +22,7 @@ class YesNoWidget extends StatefulWidget {
 }
 
 class _YesNoWidgetState extends State<YesNoWidget> {
-  late String _selectedOption;
+  String? _selectedOption;
 
   @override
   void initState() {

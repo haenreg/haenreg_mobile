@@ -97,7 +97,6 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 );
               case 'YES_NO':
                 return YesNoWidget(
-                  selectedOption: 'NO',
                   questionId: question['id'],
                   title: question['title'],
                   description: question['description'],
