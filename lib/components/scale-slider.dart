@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class RatingSlider extends StatefulWidget {
-  final int initialRating;
-  final ValueChanged<int> onRatingChanged;
+  final int initialRating; // Initial rating value
+  final int questionId; // ID for the question related to the rating
+  final String title; // Title of the question
+  final String description; // Description of the question
 
   const RatingSlider({
     Key? key,
     this.initialRating = 1,
+    required this.questionId,
+    required this.title,
+    required this.description, // New description parameter
     required this.onRatingChanged,
   }) : super(key: key);
+
+  final ValueChanged<Map<String, dynamic>>
+      onRatingChanged; // Updated callback type
 
   @override
   _RatingSliderState createState() => _RatingSliderState();
@@ -20,7 +29,7 @@ class _RatingSliderState extends State<RatingSlider> {
   @override
   void initState() {
     super.initState();
-    _currentRating = widget.initialRating.toDouble();
+    _currentRating = widget.initialRating.toDouble(); // Initialize rating
   }
 
   @override
@@ -28,17 +37,45 @@ class _RatingSliderState extends State<RatingSlider> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        Text(
+          widget.title, // Display the title
+          style: GoogleFonts.montserrat(
+            textStyle: const TextStyle(
+              fontSize: 24.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+        ),
+        const SizedBox(
+            height: 8.0), // Add spacing between title and description
+        Text(
+          widget.description, // Display the description
+          style: GoogleFonts.montserrat(
+            textStyle: const TextStyle(
+              fontSize: 18.0,
+              color: Colors.black,
+            ),
+          ),
+        ),
+        const SizedBox(
+            height: 16.0), // Add spacing between description and slider
         Slider(
           value: _currentRating,
           min: 1.0,
           max: 10.0,
-          divisions: 9, // To create discrete steps of 1 unit
+          divisions: 9,
           label: _currentRating.round().toString(),
           onChanged: (value) {
             setState(() {
               _currentRating = value;
-              widget.onRatingChanged(_currentRating.round());
             });
+            widget.onRatingChanged({
+              "question": widget.questionId,
+              "answer": {
+                "answer": _currentRating.round().toString(),
+              },
+            }); // Emit structured data
           },
         ),
         Row(
