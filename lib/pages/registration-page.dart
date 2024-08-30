@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:haenreg_mobile/services/http-service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:haenreg_mobile/components/custom-top-bar.dart';
 import 'package:haenreg_mobile/components/text-input.dart';
 import 'package:haenreg_mobile/components/yes-no-widget.dart';
 import 'package:haenreg_mobile/components/scale-slider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -15,12 +15,12 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPageState extends State<RegistrationPage> {
+  final HttpService _httpService = HttpService();
   final TextEditingController _textController = TextEditingController();
   final TextEditingController _titleController = TextEditingController();
   String _selectedOption = 'Ja';
   int _rating = 1; // Default rating
   List<dynamic> _questions = [];
-
 
   @override
   void initState() {
@@ -28,42 +28,29 @@ class _RegistrationPageState extends State<RegistrationPage> {
     _fetchData(); // Fetch data when the widget is initialized
   }
 
-Future<void> _fetchData() async {
+  Future<void> _fetchData() async {
+    try {
+      final response = await _httpService.get('/questions/get-questions');
 
-  debugPrint('Fiskesuppe');
-  final prefs = await SharedPreferences.getInstance();
-  final token = prefs.getString('authToken') ?? '';
+      if (response.statusCode == 200) {
+        debugPrint('Response data: ${response.body}');
+        final List<dynamic> data = json.decode(response.body);
 
-  final url = Uri.parse('http://10.0.2.2:3000/api/questions/get-questions'); // Replace with your GET endpoint
+        final modifiedData = _ensureRequiredItems(data);
 
-  try {
-    final response = await http.get(
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token', // Add the token here
-      },
-    );
-
-    if (response.statusCode == 200) {
-      debugPrint('Response data: ${response.body}');
-      final List<dynamic> data = json.decode(response.body);
-
-      final modifiedData = _ensureRequiredItems(data);
-
-      setState(() {
+        setState(() {
           _questions = modifiedData;
         });
-      debugPrint('Modified data: ${modifiedData}');
-    } else {
-      debugPrint('Error fetching data: ${response.body}');
+        debugPrint('Modified data: ${modifiedData}');
+      } else {
+        debugPrint('Error fetching data: ${response.body}');
+      }
+    } catch (error) {
+      debugPrint('An error occurred while fetching data: $error');
     }
-  } catch (error) {
-    debugPrint('An error occurred while fetching data: $error');
   }
-}
 
-List<dynamic> _ensureRequiredItems(List<dynamic> data) {
+  List<dynamic> _ensureRequiredItems(List<dynamic> data) {
     final List<dynamic> updatedData = List.from(data);
 
     // Flags to check if required items are present
@@ -107,16 +94,18 @@ List<dynamic> _ensureRequiredItems(List<dynamic> data) {
     return updatedData;
   }
 
-
   Future<void> _handleSubmit() async {
     String inputText = _textController.text;
 
     if (inputText.isNotEmpty) {
-      final url = Uri.parse('http://10.0.2.2:3000/api/cases/create-new-case'); // Update to your correct endpoint
+      final url = Uri.parse(
+          'http://10.0.2.2:3000/api/cases/create-new-case'); // Update to your correct endpoint
 
       debugPrint(_rating.toString());
+      print(inputText);
 
       try {
+        return;
         final response = await http.post(
           url,
           headers: {'Content-Type': 'application/json'},
@@ -134,7 +123,8 @@ List<dynamic> _ensureRequiredItems(List<dynamic> data) {
             {
               'id': 5, // Example question ID for rating slider
               'title': 'Rate this question', // Hardcoded title
-              'description': 'Rate the level on a scale', // Hardcoded description
+              'description':
+                  'Rate the level on a scale', // Hardcoded description
               'type': 'SCALE', // Hardcoded type for slider
               'questionChoices': [], // No choices for scale slider
               'answer': {
@@ -145,7 +135,8 @@ List<dynamic> _ensureRequiredItems(List<dynamic> data) {
         );
 
         if (response.statusCode == 200) {
-          debugPrint('Data inserted into database: Text: $inputText, Rating: $_rating');
+          debugPrint(
+              'Data inserted into database: Text: $inputText, Rating: $_rating');
         } else {
           debugPrint('Error inserting data: ${response.body}');
         }
@@ -176,6 +167,8 @@ List<dynamic> _ensureRequiredItems(List<dynamic> data) {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             TextInputField(
+              questionId: 888,
+              title: 'hello',
               controller: _textController,
               hintText: 'Skriv text her...',
               hintStyle: const TextStyle(

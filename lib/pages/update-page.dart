@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:haenreg_mobile/components/multi-select.dart';
+import 'package:haenreg_mobile/components/text-input.dart';
 import 'package:haenreg_mobile/services/http-service.dart';
 import 'package:haenreg_mobile/components/custom-top-bar.dart';
 import 'package:haenreg_mobile/components/select-one.dart';
@@ -17,6 +18,8 @@ class UpdatePage extends StatefulWidget {
 
 class _UpdatePageState extends State<UpdatePage> {
   final HttpService _httpService = HttpService();
+  final TextEditingController _textController = TextEditingController();
+
   List<Widget> questionWidgets = [];
   bool isLoading = true;
 
@@ -83,6 +86,24 @@ class _UpdatePageState extends State<UpdatePage> {
                 initialSelectedChoicesIds: initialSelectedChoicesIds,
                 onSelected: (selectedData) {
                   print("Selected Data: $selectedData");
+                },
+              );
+            case 'TEXT':
+              return TextInputField(
+                questionId: question['id'],
+                controller: _textController,
+                title: question['title'],
+                hintText: question['description'],
+                hintStyle: const TextStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.normal,
+                ),
+                textStyle: const TextStyle(
+                  fontSize: 14.0,
+                ),
+                borderRadius: BorderRadius.circular(12.0),
+                onTextChanged: (text) {
+                  print('Text changed: $text');
                 },
               );
             // case 'SCALE':
