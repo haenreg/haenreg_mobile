@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:haenreg_mobile/components/multi-select.dart';
 import 'package:haenreg_mobile/services/http-service.dart';
 import 'package:haenreg_mobile/components/custom-top-bar.dart';
 import 'package:haenreg_mobile/components/select-one.dart';
@@ -45,19 +46,14 @@ class _UpdatePageState extends State<UpdatePage> {
           );
 
           // Initialize variables for the initial selected value
-          int? initialSelectedChoiceId;
+          List<int>? initialSelectedChoicesIds;
           String? initialAnswerString;
 
-          if (answer != null) {
-            if (answer['answerChoices'] != null &&
-                answer['answerChoices'].isNotEmpty) {
-              // Use the ID from answerChoices if available
-              initialSelectedChoiceId =
-                  answer['answerChoices'][0]['questionChoice']['id'];
-            } else if (answer['answer'] != null && answer['answer'] is String) {
-              // Use the string answer if answerChoices is not available
-              initialAnswerString = answer['answer'];
-            }
+          if (answer != null && answer['answerChoices'] != null) {
+            initialSelectedChoicesIds =
+                (answer['answerChoices'] as List<dynamic>)
+                    .map<int>((choice) => choice['questionChoice']['id'] as int)
+                    .toList();
           }
 
           switch (question['type']) {
@@ -69,11 +65,24 @@ class _UpdatePageState extends State<UpdatePage> {
                 choices: List<Map<String, dynamic>>.from(
                   question['questionChoices'],
                 ),
-                initialSelectedChoiceId: initialSelectedChoiceId,
+                initialSelectedChoiceId: initialSelectedChoicesIds?.first,
                 onSelected: (selectedData) {
                   print("Selected Data: $selectedData");
                   // Handle the submitted data here
                   // For example, you could send it to an API or update your state
+                },
+              );
+            case 'MULTI_SELECT':
+              return MultiSelect(
+                questionId: question['id'],
+                title: question['title'],
+                description: question['description'],
+                choices: List<Map<String, dynamic>>.from(
+                  question['questionChoices'],
+                ),
+                initialSelectedChoicesIds: initialSelectedChoicesIds,
+                onSelected: (selectedData) {
+                  print("Selected Data: $selectedData");
                 },
               );
             // case 'SCALE':

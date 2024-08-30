@@ -1,61 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SelectOne extends StatefulWidget {
+class MultiSelect extends StatefulWidget {
   final int questionId;
   final String title;
   final String description;
   final List<Map<String, dynamic>> choices;
   final Function(Map<String, dynamic>) onSelected; // Callback to parent
-  final int? initialSelectedChoiceId; // New property for initial selection
+  final List<int>?
+      initialSelectedChoicesIds; // New property for initial selections
 
-  const SelectOne({
+  const MultiSelect({
     super.key,
     required this.questionId,
     required this.title,
     required this.description,
     required this.choices,
     required this.onSelected,
-    this.initialSelectedChoiceId, // Optional, if no initial selection is needed
+    this.initialSelectedChoicesIds, // Optional, if no initial selection is needed
   });
 
   @override
-  _SelectOneState createState() => _SelectOneState();
+  _MultiSelectState createState() => _MultiSelectState();
 }
 
-class _SelectOneState extends State<SelectOne> {
-  int? _selectedChoiceId; // State variable to track the selected choice
+class _MultiSelectState extends State<MultiSelect> {
+  List<int> _selectedChoicesIds =
+      []; // State variable to track selected choices
 
   @override
   void initState() {
     super.initState();
-    // Set the initial selected choice if provided by the parent
-    _selectedChoiceId = widget.initialSelectedChoiceId;
+    // Set the initial selected choices if provided by the parent
+    if (widget.initialSelectedChoicesIds != null) {
+      _selectedChoicesIds = List.from(widget.initialSelectedChoicesIds!);
+    }
   }
 
-  void _onRadioSelected(int choiceId) {
+  void _onCheckboxSelected(bool? selected, int choiceId) {
     setState(() {
-      _selectedChoiceId = choiceId; // Update the selected choice
-    });
-
-    // Send the selected choice back to the parent component
-    widget.onSelected({
-      "question": widget.questionId,
-      "answer": {
-        "choice": [choiceId]
+      if (selected == true) {
+        _selectedChoicesIds.add(choiceId); // Add choice if selected
+      } else {
+        _selectedChoicesIds.remove(choiceId); // Remove choice if deselected
       }
     });
-  }
 
-  @override
-  void didUpdateWidget(covariant SelectOne oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.initialSelectedChoiceId != oldWidget.initialSelectedChoiceId) {
-      setState(() {
-        _selectedChoiceId =
-            widget.initialSelectedChoiceId; // Update when the prop changes
-      });
-    }
+    // Send the selected choices back to the parent component
+    widget.onSelected({
+      "question": widget.questionId,
+      "answer": {"choice": _selectedChoicesIds}
+    });
   }
 
   @override
@@ -85,7 +80,7 @@ class _SelectOneState extends State<SelectOne> {
         ),
         const SizedBox(height: 8),
         ...widget.choices.map((choice) {
-          return RadioListTile(
+          return CheckboxListTile(
             title: Text(
               choice['choice'],
               style: GoogleFonts.montserrat(
@@ -95,11 +90,12 @@ class _SelectOneState extends State<SelectOne> {
                 ),
               ),
             ),
-            value: choice['id'],
-            groupValue: _selectedChoiceId, // Bind to the state variable
-            onChanged: (value) {
-              _onRadioSelected(choice['id']); // Handle selection
+            value: _selectedChoicesIds.contains(choice['id']),
+            onChanged: (bool? value) {
+              _onCheckboxSelected(value, choice['id']); // Handle selection
             },
+            controlAffinity:
+                ListTileControlAffinity.leading, // Checkbox on the left side
           );
         }).toList(),
         const SizedBox(height: 16),
