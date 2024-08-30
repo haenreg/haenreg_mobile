@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:haenreg_mobile/components/case-item.dart';
 import 'package:haenreg_mobile/components/custom-top-bar.dart';
+import 'registration-page.dart';
 
 class Overview extends StatefulWidget {
   const Overview({super.key});
@@ -162,6 +163,16 @@ class _OverviewState extends State<Overview> {
             ],
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => RegistrationPage()),
+          );
+        },
+        tooltip: 'Tilføj hændelse',
+        child: const Icon(Icons.add),
       ),
     );
   }
