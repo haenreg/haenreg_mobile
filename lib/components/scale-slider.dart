@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 
 class RatingSlider extends StatefulWidget {
-  final int initialRating;
-  final ValueChanged<int> onRatingChanged;
+  final int initialRating; // Initial rating value
+  final int questionId; // ID for the question related to the rating
+  final String title; // Title of the question
 
   const RatingSlider({
     Key? key,
     this.initialRating = 1,
+    required this.questionId,
+    required this.title,
     required this.onRatingChanged,
   }) : super(key: key);
+
+  final ValueChanged<int> onRatingChanged;
 
   @override
   _RatingSliderState createState() => _RatingSliderState();
@@ -20,7 +25,7 @@ class _RatingSliderState extends State<RatingSlider> {
   @override
   void initState() {
     super.initState();
-    _currentRating = widget.initialRating.toDouble();
+    _currentRating = widget.initialRating.toDouble(); // Initialize rating
   }
 
   @override
@@ -28,17 +33,21 @@ class _RatingSliderState extends State<RatingSlider> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        Text(
+          widget.title, // Display the title
+          style: const TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal),
+        ),
         Slider(
           value: _currentRating,
           min: 1.0,
           max: 10.0,
-          divisions: 9, // To create discrete steps of 1 unit
+          divisions: 9,
           label: _currentRating.round().toString(),
           onChanged: (value) {
             setState(() {
               _currentRating = value;
-              widget.onRatingChanged(_currentRating.round());
             });
+            widget.onRatingChanged(_currentRating.round());
           },
         ),
         Row(

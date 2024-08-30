@@ -12,9 +12,11 @@ class TextInputField extends StatelessWidget {
     Key? key,
     required this.controller,
     required this.hintText,
-    this.hintStyle = const TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal),
+    this.hintStyle =
+        const TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal),
     this.textStyle = const TextStyle(fontSize: 14.0),
-    this.borderRadius = const BorderRadius.all(Radius.circular(7.0)), // Default radius
+    this.borderRadius =
+        const BorderRadius.all(Radius.circular(7.0)), // Default radius
     this.backgroundColor = Colors.white, // Default value
   }) : super(key: key);
 
@@ -25,15 +27,19 @@ class TextInputField extends StatelessWidget {
         color: backgroundColor,
         borderRadius: borderRadius,
       ),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(
-          hintText: hintText,
-          hintStyle: hintStyle,
-          border: InputBorder.none, // Remove borders
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0), // Adjust padding if needed
+      child: Align(
+        alignment: Alignment.topLeft, // Aligns the text to the top-right
+        child: TextField(
+          controller: controller,
+          textAlign: TextAlign.left, // Align text to the right
+          decoration: InputDecoration(
+            hintText: hintText,
+            hintStyle: hintStyle,
+            border: InputBorder.none, // Remove borders
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 60.0)
+          ),
+          style: textStyle,
         ),
-        style: textStyle,
       ),
     );
   }
