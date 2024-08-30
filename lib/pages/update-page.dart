@@ -156,10 +156,6 @@ class _UpdatePageState extends State<UpdatePage> {
     }
   }
 
-  void _onRatingChanged(int rating) {
-    print('Rating: ${rating}');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
