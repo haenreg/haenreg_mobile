@@ -6,6 +6,7 @@ class TextInputField extends StatelessWidget {
   final String hintText;
   final String title;
   final int questionId; // New parameter for questionId
+  final String? initialValue; // New optional parameter for initial value
   final TextStyle hintStyle;
   final TextStyle textStyle;
   final BorderRadius borderRadius;
@@ -19,6 +20,7 @@ class TextInputField extends StatelessWidget {
     required this.hintText,
     required this.title,
     required this.questionId, // Required questionId parameter
+    this.initialValue, // Optional initialValue parameter
     this.hintStyle =
         const TextStyle(fontSize: 14.0, fontWeight: FontWeight.normal),
     this.textStyle = const TextStyle(fontSize: 14.0),
@@ -30,6 +32,11 @@ class TextInputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // If an initialValue is provided, set it in the controller
+    if (initialValue != null && controller.text.isEmpty) {
+      controller.text = initialValue!;
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

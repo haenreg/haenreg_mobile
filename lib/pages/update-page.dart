@@ -60,6 +60,9 @@ class _UpdatePageState extends State<UpdatePage> {
                     .map<int>((choice) => choice['questionChoice']['id'] as int)
                     .toList();
           }
+          if (answer != null && answer['answer'] != null) {
+            initialAnswerString = answer['answer'];
+          }
 
           switch (question['type']) {
             case 'SELECT_ONE':
@@ -92,6 +95,7 @@ class _UpdatePageState extends State<UpdatePage> {
               );
             case 'TEXT':
               return TextInputField(
+                initialValue: initialAnswerString,
                 questionId: question['id'],
                 controller: _textController,
                 title: question['title'],
@@ -105,12 +109,14 @@ class _UpdatePageState extends State<UpdatePage> {
                 ),
                 borderRadius: BorderRadius.circular(12.0),
                 onTextChanged: (text) {
-                  print('Text changed: $text');
+                  print(
+                      'Text changed: $text og så har vi den her $initialAnswerString');
                 },
               );
             case 'SCALE':
+              int initialRating = int.tryParse(initialAnswerString ?? '') ?? 1;
               return RatingSlider(
-                initialRating: 1,
+                initialRating: initialRating,
                 questionId: question['id'],
                 title: question['title'],
                 description: question['description'],
@@ -120,7 +126,7 @@ class _UpdatePageState extends State<UpdatePage> {
               );
             case 'YES_NO':
               return YesNoWidget(
-                selectedOption: 'YES',
+                selectedOption: initialAnswerString ?? 'NO',
                 questionId: question['id'],
                 title: question['title'],
                 description: question['description'],
@@ -169,7 +175,14 @@ class _UpdatePageState extends State<UpdatePage> {
             : ListView.builder(
                 itemCount: questionWidgets.length,
                 itemBuilder: (context, index) {
-                  return questionWidgets[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, // Side padding
+                      vertical:
+                          8.0, // Vertical padding for spacing between items
+                    ),
+                    child: questionWidgets[index],
+                  );
                 },
               ),
       ),
