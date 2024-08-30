@@ -183,10 +183,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
             const SizedBox(height: 16.0),
             YesNoWidget(
               selectedOption: _selectedOption,
-              onOptionChanged: (String newValue) {
-                setState(() {
-                  _selectedOption = newValue;
-                });
+              questionId: 888,
+              title: 'title',
+              description: 'description',
+              onOptionChanged: (newValue) {
+                print('Yes No Changed: $newValue');
               },
             ),
             const SizedBox(height: 16.0),
@@ -194,7 +195,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
               initialRating: _rating,
               questionId: 5, // Example question ID for slider
               title: 'Din reaktion', // Hardcoded title
-              onRatingChanged: _onRatingChanged,
+              description: 'På en skala fra 1-10', // Hardcoded title
+              onRatingChanged: (rating) {
+                print('Text changed: $rating');
+              },
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(

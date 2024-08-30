@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:haenreg_mobile/components/multi-select.dart';
+import 'package:haenreg_mobile/components/scale-slider.dart';
 import 'package:haenreg_mobile/components/text-input.dart';
+import 'package:haenreg_mobile/components/yes-no-widget.dart';
 import 'package:haenreg_mobile/services/http-service.dart';
 import 'package:haenreg_mobile/components/custom-top-bar.dart';
 import 'package:haenreg_mobile/components/select-one.dart';
@@ -106,17 +108,26 @@ class _UpdatePageState extends State<UpdatePage> {
                   print('Text changed: $text');
                 },
               );
-            // case 'SCALE':
-            //   return Scale(
-            //     title: question['title'],
-            //     description: question['description'],
-            //     initialValue: initialAnswerString != null ? int.tryParse(initialAnswerString) : null,
-            //     onSelected: (selectedData) {
-            //       print("Selected Data: $selectedData");
-            //       // Handle the submitted data here
-            //     },
-            //   );
-            // Add more cases here for different question types as you create more components
+            case 'SCALE':
+              return RatingSlider(
+                initialRating: 1,
+                questionId: question['id'],
+                title: question['title'],
+                description: question['description'],
+                onRatingChanged: (rating) {
+                  print('Text changed: $rating');
+                },
+              );
+            case 'YES_NO':
+              return YesNoWidget(
+                selectedOption: 'YES',
+                questionId: question['id'],
+                title: question['title'],
+                description: question['description'],
+                onOptionChanged: (newValue) {
+                  print('YES_NO changed: $newValue');
+                },
+              );
             default:
               return Container(
                 padding: EdgeInsets.all(16.0),
@@ -137,6 +148,10 @@ class _UpdatePageState extends State<UpdatePage> {
       });
       print('Failed to load questions: $error');
     }
+  }
+
+  void _onRatingChanged(int rating) {
+    print('Rating: ${rating}');
   }
 
   @override
