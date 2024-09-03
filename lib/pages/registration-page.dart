@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:haenreg_mobile/components/date-selector.dart';
 import 'package:haenreg_mobile/components/multi-select.dart';
 import 'package:haenreg_mobile/components/select-one.dart';
 import 'package:haenreg_mobile/services/http-service.dart';
@@ -103,6 +104,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   onOptionChanged: (newValue) {
                     setBodyForQuestion(newValue);
                   },
+                );
+                case 'DATE':
+                return DateTimePicker(
+                  questionId: question['id'],
+                  title: question['title'],
+                  description: question['description'],
+                  onDateTimeChanged: (date) {
+                     setBodyForQuestion(date);
+                  }, 
                 );
               default:
                 return Container(
