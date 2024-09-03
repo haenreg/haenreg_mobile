@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:haenreg_mobile/components/date-selector.dart';
 import 'package:haenreg_mobile/components/multi-select.dart';
 import 'package:haenreg_mobile/components/scale-slider.dart';
 import 'package:haenreg_mobile/components/text-input.dart';
@@ -132,6 +133,16 @@ class _UpdatePageState extends State<UpdatePage> {
                   setBodyForQuestion(newValue);
                 },
               );
+               case 'DATE':
+                return DateTimePicker(
+                  questionId: question['id'],
+                  title: question['title'],
+                  description: question['description'],
+                  initialValue: initialAnswerString,
+                  onDateTimeChanged: (date) {
+                     setBodyForQuestion(date);
+                  }, 
+                );
             default:
               return Container(
                 padding: EdgeInsets.all(16.0),
