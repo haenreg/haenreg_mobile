@@ -4,11 +4,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class CustomTopBar extends StatefulWidget implements PreferredSizeWidget {
   final bool isEditMode;
   final VoidCallback? onEdit;
+  final String editButtonText; // New parameter for edit button text
 
   const CustomTopBar({
     Key? key,
     this.isEditMode = false,
     this.onEdit,
+    this.editButtonText = 'Rediger', // Default value is "Rediger"
   }) : super(key: key);
 
   @override
@@ -87,7 +89,7 @@ class _CustomTopBarState extends State<CustomTopBar> {
               ),
             ),
             child: Text(
-              widget.isEditMode ? 'Rediger' : 'Log ud',
+              widget.isEditMode ? widget.editButtonText : 'Log ud',
               style: const TextStyle(
                 color: Colors.black,
                 fontSize: 16,
