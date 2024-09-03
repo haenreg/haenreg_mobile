@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class CaseItem extends StatelessWidget {
   final int id;
@@ -16,6 +17,15 @@ class CaseItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String formattedDate;
+
+    try {
+      final DateTime parsedDate = DateTime.parse(date);
+      formattedDate = DateFormat('dd MMM yyyy, HH:mm').format(parsedDate);
+    } catch (e) {
+      formattedDate = date;
+    }
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       padding: const EdgeInsets.all(16.0),
@@ -47,7 +57,7 @@ class CaseItem extends StatelessWidget {
               ),
               const SizedBox(height: 8.0),
               Text(
-                date,
+                formattedDate,
                 style: const TextStyle(
                   fontSize: 14.0,
                   color: Colors.grey,
