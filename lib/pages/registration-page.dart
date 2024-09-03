@@ -6,6 +6,7 @@ import 'package:haenreg_mobile/components/text-input.dart';
 import 'package:haenreg_mobile/components/yes-no-widget.dart';
 import 'package:haenreg_mobile/components/scale-slider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:haenreg_mobile/components/date-selector.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -20,6 +21,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   String _selectedOption = 'Ja';
   int _rating = 1; // Default rating
   List<dynamic> _questions = [];
+  DateTime _selectedDateTime = DateTime.now();
 
 
   @override
@@ -202,6 +204,15 @@ List<dynamic> _ensureRequiredItems(List<dynamic> data) {
               questionId: 5, // Example question ID for slider
               title: 'Din reaktion', // Hardcoded title
               onRatingChanged: _onRatingChanged,
+            ),
+            const SizedBox(height: 16.0),
+            // Adding the DateTimePicker widget here
+            DateTimePicker(
+              onDateTimeChanged: (DateTime newDateTime) {
+                setState(() {
+                  _selectedDateTime = newDateTime; // Store the selected DateTime
+                });
+              },
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
