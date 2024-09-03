@@ -138,6 +138,7 @@ class _UpdatePageState extends State<UpdatePage> {
                   questionId: question['id'],
                   title: question['title'],
                   description: question['description'],
+                  initialValue: initialAnswerString,
                   onDateTimeChanged: (date) {
                      setBodyForQuestion(date);
                   }, 

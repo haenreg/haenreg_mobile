@@ -8,6 +8,7 @@ class DateTimePicker extends StatefulWidget {
   final int questionId;
   final String title;
   final String description;
+  final String? initialValue;
 
   const DateTimePicker({
     Key? key,
@@ -15,6 +16,7 @@ class DateTimePicker extends StatefulWidget {
     required this.title,
     required this.description,
     required this.onDateTimeChanged,
+    this.initialValue,
   }) : super(key: key);
 
   @override
@@ -22,11 +24,22 @@ class DateTimePicker extends StatefulWidget {
 }
 
 class _DateTimePickerState extends State<DateTimePicker> {
-  DateTime _selectedDateTime = DateTime.now();
+  late DateTime _selectedDateTime;
 
   // Formatters for date and time
   final DateFormat _dateFormatter = DateFormat('dd / MMM / yyyy');
   final DateFormat _timeFormatter = DateFormat('HH : mm');
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize _selectedDateTime based on initialValue
+    if (widget.initialValue != null) {
+      _selectedDateTime = DateTime.parse(widget.initialValue!);
+    } else {
+      _selectedDateTime = DateTime.now();
+    }
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime now = DateTime.now();
