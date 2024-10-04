@@ -22,12 +22,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   final TextEditingController _textController = TextEditingController();
   bool isLoading = true;
   List<Widget> questionWidgets = [];
-  List<Map<String, dynamic>> answers = [
-    {
-      "question": 1,
-      "answer": {"answer": "15-08-2024"}
-    }
-  ];
+  List<Map<String, dynamic>> answers = [];
 
   @override
   void initState() {
@@ -105,14 +100,14 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     setBodyForQuestion(newValue);
                   },
                 );
-                case 'DATE':
+              case 'DATE':
                 return DateTimePicker(
                   questionId: question['id'],
                   title: question['title'],
                   description: question['description'],
                   onDateTimeChanged: (date) {
-                     setBodyForQuestion(date);
-                  }, 
+                    setBodyForQuestion(date);
+                  },
                 );
               default:
                 return Container(
